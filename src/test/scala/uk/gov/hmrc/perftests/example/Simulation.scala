@@ -21,7 +21,25 @@ import uk.gov.hmrc.perftests.example.Requests._
 
 class Simulation extends PerformanceTestRunner {
 
-  setup("start-page-refund-preset", "Start Page with Refund Preset") withRequests (navigateToStartPage, postRefundPreset, getStartPageRefundPreset, postStartJourneyRefundPreset, getAuthLogin)
+  setup("start-refund-journey", "Start Refund Journey") withRequests
+    (getAuthLogin, postAuthLoginRefund, getStartPage, postStartPageRefund, getRefundAmount)
+
+  setup("start-history-journey", "Start History Journey") withRequests
+    (getAuthLogin, postAuthLoginHistory, getStartPage, postStartPageRefund, getRefundHistory)
+
+  setup("successful-refund-journey", "Successful Refund Journey") withRequests
+    (getIvStubRefund, postIvStubSuccess, getRefundAmountPage, postRefundAmountPage, getWeNeedBankDetailsPage,
+      getAccountOnFile, getAccountTypePage, postAccountTypePage, getBankDetailsPage, postBankDetailsPage,
+      getCheckDetailsPage, getCheckDetailsConfirmPage, getReauthentication, getReauthenticationPage,
+      getSubmit, getConfirmationPage)
+
+  setup("unsuccessful-refund-journey", "Unsuccessful Refund Journey") withRequests
+    (getIvStubRefund, postIvStubFailed, getCannotConfirmIdentityPage)
+
+  setup("history-journey", "History Journey") withRequests
+    (getIvStubHistory, postIvStubSuccess, getRefundHistoryJourney, getHistoryPage, getRefundProcessingPage,
+      getHistoryPage, getRefundPaidPage, getHistoryPage, getRefundApprovedPage, getHistoryPage,
+      getRefundRejectedPage)
 
   runSimulation()
 }
