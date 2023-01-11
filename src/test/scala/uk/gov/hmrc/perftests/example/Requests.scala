@@ -35,27 +35,40 @@ object Requests extends ServicesConfiguration {
       .get(s"$baseUrlAuth$routeAuth/gg-sign-in": String)
       .check(status.is(200))
 
-  val postAuthLoginRefund: HttpRequestBuilder =
-    http("Post Auth Login - Refund")
+  val postAuthLoginRefundSuccess: HttpRequestBuilder =
+    http("Post Auth Login - Refund Journey Successful")
       .post(s"$baseUrlAuth$routeAuth/gg-sign-in": String)
       .formParam("authorityId", "")
-      .formParam("redirectionUrl", s"$baseUrl/self-assessment-refund/test-only/start-journey?type=StartRefund&nino=AB111111C&fullAmount=987.65&lastPaymentMethod=CARD&primeStubs=IfNotExists")
+      .formParam("redirectionUrl", s"$baseUrl$route/test-only/start-journey?type=StartRefund&nino=AB111111C&fullAmount=987.65&lastPaymentMethod=CARD&primeStubs=IfNotExists")
+      .formParam("nino", "AB111111C")
+      .formParam("credentialStrength", "strong")
+      .formParam("confidenceLevel", "250")
+      .formParam("affinityGroup", "Individual")
+      .check(status.is(303))
+      .check(header("Location").is(s"$baseUrl$route/test-only/start-journey?type=StartRefund&nino=AB111111C&fullAmount=987.65&lastPaymentMethod=CARD&primeStubs=IfNotExists").saveAs("StartJourneyPage"))
+
+  val postAuthLoginRefundUnsuccessful: HttpRequestBuilder =
+    http("Post Auth Login - Refund Journey Unsuccessful")
+      .post(s"$baseUrlAuth$routeAuth/gg-sign-in": String)
+      .formParam("authorityId", "")
+      .formParam("redirectionUrl", s"$baseUrl$route/test-only/start-journey?type=StartRefund&nino=AB111111C&fullAmount=987.65&lastPaymentMethod=CARD&primeStubs=IfNotExists")
       .formParam("credentialStrength", "strong")
       .formParam("confidenceLevel", "50")
       .formParam("affinityGroup", "Individual")
       .check(status.is(303))
-      .check(header("Location").is(s"$baseUrl/self-assessment-refund/test-only/start-journey?type=StartRefund&nino=AB111111C&fullAmount=987.65&lastPaymentMethod=CARD&primeStubs=IfNotExists").saveAs("StartJourneyPage"))
+      .check(header("Location").is(s"$baseUrl$route/test-only/start-journey?type=StartRefund&nino=AB111111C&fullAmount=987.65&lastPaymentMethod=CARD&primeStubs=IfNotExists").saveAs("StartJourneyPage"))
 
   val postAuthLoginHistory: HttpRequestBuilder =
     http("Post Auth Login - History")
       .post(s"$baseUrlAuth$routeAuth/gg-sign-in": String)
       .formParam("authorityId", "")
-      .formParam("redirectionUrl", s"$baseUrl/self-assessment-refund/test-only/start-journey?type=ViewHistory&nino=AB111111C&fullAmount=&lastPaymentMethod=BACS&primeStubs=IfNotExists")
+      .formParam("redirectionUrl", s"$baseUrl$route/test-only/start-journey?type=ViewHistory&nino=AB111111C&fullAmount=&lastPaymentMethod=BACS&primeStubs=IfNotExists")
+      .formParam("nino", "AB111111C")
       .formParam("credentialStrength", "strong")
-      .formParam("confidenceLevel", "50")
+      .formParam("confidenceLevel", "250")
       .formParam("affinityGroup", "Individual")
       .check(status.is(303))
-      .check(header("Location").is(s"$baseUrl/self-assessment-refund/test-only/start-journey?type=ViewHistory&nino=AB111111C&fullAmount=&lastPaymentMethod=BACS&primeStubs=IfNotExists").saveAs("StartJourneyPage"))
+      .check(header("Location").is(s"$baseUrl$route/test-only/start-journey?type=ViewHistory&nino=AB111111C&fullAmount=&lastPaymentMethod=BACS&primeStubs=IfNotExists").saveAs("StartJourneyPage"))
 
   val getStartPage: HttpRequestBuilder =
     http("Get Start Page")
@@ -75,7 +88,7 @@ object Requests extends ServicesConfiguration {
   val postStartPageHistory: HttpRequestBuilder =
     http("Post Start Page - History")
       .post("${StartJourneyPage}": String)
-      .formParam("type", "StartRefund")
+      .formParam("type", "ViewHistory")
       .formParam("nino", "AB111111C")
       .formParam("fullAmount", "")
       .formParam("lastPaymentMethod", "BACS")
@@ -89,8 +102,9 @@ object Requests extends ServicesConfiguration {
 
   val getRefundHistory: HttpRequestBuilder =
     http("Get Refund History")
-      .get(s"$baseUrl$route/refund-history": String)
+      .get(s"$baseUrl$route/refund-history/start": String)
       .check(status.is(303))
+      .check(header("Location").is(s"$route/refund-history")saveAs("HistoryPage"))
 
   val getIvStubRefund: HttpRequestBuilder =
     http("Get IV Stub")
@@ -98,24 +112,6 @@ object Requests extends ServicesConfiguration {
       .check(status.is(200))
       .check(css("input[name=csrfToken]", "value").saveAs("csrfToken"))
       .check(css("form[method='POST']", "action").saveAs("ivStubsUrl"))
-
-  val getIvStubHistory: HttpRequestBuilder =
-    http("Get IV Stub")
-      .get(s"$baseUrlIV$routeIV/uplift?confidenceLevel=250&origin=self-assessment-refund&completionURL=/self-assessment-refund/refund-history/start&failureURL=/self-assessment-refund/failedUplift": String)
-      .check(status.is(200))
-      .check(css("input[name=csrfToken]", "value").saveAs("csrfToken"))
-      .check(css("form[method='POST']", "action").saveAs("ivStubsUrl"))
-
-  val postIvStubSuccess: HttpRequestBuilder =
-    http("Post IV Stub - Success")
-      .post(s"$baseUrlIV$${ivStubsUrl}": String)
-      .formParam("csrfToken", "${csrfToken}")
-      .formParam("forNino", "AB111111C")
-      .formParam("requiredResult", "Success")
-      .formParam("listOfSuccessEvidences", "")
-      .formParam("send", "send")
-      .check(status.is(303))
-      .check(header("Location").saveAs("RefundAmountPage"))
 
   val postIvStubFailed: HttpRequestBuilder =
     http("Post IV Stub - Failed")
@@ -130,7 +126,7 @@ object Requests extends ServicesConfiguration {
 
   val getRefundAmountPage: HttpRequestBuilder =
     http("Get Refund Amount Page")
-      .get(s"$baseUrl$${RefundAmountPage}": String)
+      .get(s"$baseUrl$route/refund-amount": String)
       .check(status.is(200))
       .check(css("input[name=csrfToken]", "value").saveAs("csrfToken"))
 
@@ -141,7 +137,7 @@ object Requests extends ServicesConfiguration {
 
   val postRefundAmountPage: HttpRequestBuilder =
     http("Post Refund Amount Page")
-      .post(s"$baseUrl$${RefundAmountPage}": String)
+      .post(s"$baseUrl$route/refund-amount": String)
       .formParam("csrfToken", "${csrfToken}")
       .formParam("choice", "partial")
       .formParam("amount", "500")
@@ -224,12 +220,6 @@ object Requests extends ServicesConfiguration {
     http("Get Confirmation Page")
       .get(s"$baseUrl$${ConfirmationPage}": String)
       .check(status.is(200))
-
-  val getRefundHistoryJourney: HttpRequestBuilder =
-    http("Get Refund History Journey")
-      .get(s"$baseUrl$${RefundAmountPage}": String)
-      .check(status.is(303))
-      .check(header("Location").is(s"$route/refund-history").saveAs("HistoryPage"))
 
   val getHistoryPage: HttpRequestBuilder =
     http("Get History Page")
