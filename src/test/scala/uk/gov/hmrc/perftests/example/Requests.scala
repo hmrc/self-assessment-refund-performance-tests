@@ -194,8 +194,8 @@ object Requests extends ServicesConfiguration {
       .check(status.is(200))
       .check(css("input[name=csrfToken]", "value").saveAs("csrfToken"))
 
-  val getCheckDetailsConfirmPage: HttpRequestBuilder =
-    http("Get Check Details Confirm Page")
+  val postCheckDetailsConfirmPage: HttpRequestBuilder =
+    http("Post Check Details Confirm Page")
       .post(s"$baseUrl$route/check-your-details-confirm": String)
       .formParam("csrfToken", "${csrfToken}")
       .check(status.is(303))
