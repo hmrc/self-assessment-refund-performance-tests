@@ -32,7 +32,7 @@ class Simulation extends PerformanceTestRunner {
 
   setup("successful-refund-journey", "Successful Refund Journey") withRequests
     (getRefundAmountPage, postRefundAmountPage, getWeNeedBankDetailsPage, getAccountOnFile, getAccountTypePage,
-      postAccountTypePage, getBankDetailsPage, postBankDetailsPage, getCheckDetailsPage, getCheckDetailsConfirmPage,
+      postAccountTypePage, getBankDetailsPage, postBankDetailsPage, getCheckDetailsPage, postCheckDetailsConfirmPage,
       getReauthentication, getReauthenticationPage, getSubmit, getConfirmationPage)
 
   setup("unsuccessful-refund-journey", "Unsuccessful Refund Journey") withRequests
