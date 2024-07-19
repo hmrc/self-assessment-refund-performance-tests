@@ -192,12 +192,14 @@ object Requests extends ServicesConfiguration {
     http("Get Check Details Page")
       .get(s"$baseUrl$${CheckDetailsPage}": String)
       .check(status.is(200))
+      .check(css("input[name=csrfToken]", "value").saveAs("csrfToken"))
 
   val getCheckDetailsConfirmPage: HttpRequestBuilder =
     http("Get Check Details Confirm Page")
-      .get(s"$baseUrl$route/check-your-details-confirm": String)
+      .post(s"$baseUrl$route/check-your-details-confirm": String)
+      .formParam("csrfToken", "${csrfToken}")
       .check(status.is(303))
-      .check(header("Location").is(route+"/reauthentication").saveAs("Reauthentication"))
+      .check(header("Location").is(route + "/reauthentication").saveAs("Reauthentication"))
 
   val getReauthentication: HttpRequestBuilder =
     http("Get Reauthentication")
