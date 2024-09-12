@@ -21,38 +21,30 @@ import uk.gov.hmrc.perftests.example.Requests._
 
 class Simulation extends PerformanceTestRunner {
 
-  setup("start-successful-refund-journey", "Start Refund Journey")
-    .withRequests(getAuthLogin, postAuthLoginRefundSuccess, getStartPage, postStartPageRefund)
+  setup("individual-refund-start", "Refund Journey - Individual")
+    .withRequests(getAuthLogin, postAuthLoginRefund("Individual"), getStartPage, postStartPageRefund, getRefundAmountPage,
+      postRefundAmountPage("Individual"))
 
-  setup("start-unsuccessful-refund-journey", "Start Refund Journey")
-    .withRequests(getAuthLogin, postAuthLoginRefundUnsuccessful, getStartPage, postStartPageRefund, getRefundAmount)
+  setup("agent-refund-start", "Refund Journey - Agent")
+    .withRequests(getAuthLogin, postAuthLoginRefund("Agent"), getStartPage, postStartPageRefund, getRefundAmountPage,
+      postRefundAmountPage("Agent"))
 
-  setup("start-history-journey", "Start History Journey")
-    .withRequests(getAuthLogin, postAuthLoginHistory, getStartPage, postStartPageHistory, getRefundHistory)
+    setup("refund-journey", "Refund Journey")
+      .withRequests(getHowYouWillGetRefundPage,
+          postHowYouWillGetRefundPage,
+          getAccountTypePage,
+          postAccountTypePage,
+          getBankDetailsPage,
+          postBankDetailsPage,
+          getCheckDetailsPage,
+          postCheckDetailsConfirmPage,
+          getReauthentication,
+          getReauthenticationPage,
+          getSubmit,
+          getConfirmationPage)
 
-  setup("successful-refund-journey", "Successful Refund Journey")
-    .withRequests(
-      getRefundAmountPage,
-      postRefundAmountPage,
-      getHowYouWillGetRefundPage,
-      postHowYouWillGetRefundPage,
-      getAccountTypePage,
-      postAccountTypePage,
-      getBankDetailsPage,
-      postBankDetailsPage,
-      getCheckDetailsPage,
-      postCheckDetailsConfirmPage,
-      getReauthentication,
-      getReauthenticationPage,
-      getSubmit,
-      getConfirmationPage
-    )
-
-  setup("unsuccessful-refund-journey", "Unsuccessful Refund Journey")
-    .withRequests(getIvStubRefund, postIvStubFailed, getCannotConfirmIdentityPage)
-
-  setup("history-journey", "History Journey")
-    .withRequests(
+    setup("history-journey", "History Journey")
+    .withRequests(getAuthLogin, postAuthLoginHistory, getStartPage, postStartPageHistory, getRefundHistory,
       getHistoryPage,
       getRefundProcessingPage,
       getHistoryPage,
@@ -60,8 +52,7 @@ class Simulation extends PerformanceTestRunner {
       getHistoryPage,
       getRefundApprovedPage,
       getHistoryPage,
-      getRefundRejectedPage
-    )
+      getRefundRejectedPage)
 
   runSimulation()
 }
