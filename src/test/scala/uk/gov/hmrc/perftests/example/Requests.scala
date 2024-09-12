@@ -44,14 +44,34 @@ object Requests extends ServicesConfiguration {
         "redirectionUrl",
         s"$baseUrl$route/test-only/start-journey?type=StartRefund&nino=AB200111C&fullAmount=987.65&lastPaymentMethod=CARD&primeStubs=IfNotExists"
       )
-      .formParam("nino", if (userType == "Individual") {"AB200111C"} else {""})
+      .formParam(
+        "nino",
+        if (userType == "Individual") { "AB200111C" }
+        else { "" }
+      )
       .formParam("credentialStrength", "strong")
       .formParam("confidenceLevel", "250")
       .formParam("affinityGroup", userType)
-      .formParam("enrolment[0].name", if (userType == "Agent") {"HMRC-MTD-IT"} else {""})
-      .formParam("enrolment[0].taxIdentifier[0].name", if (userType == "Agent") {"MTDITID"} else {""})
-      .formParam("enrolment[0].taxIdentifier[0].value", if (userType == "Agent") {"FJWF01635669298"} else {""})
-      .formParam("enrolment[0].state", if (userType == "Agent") {"Activated"} else {""})
+      .formParam(
+        "enrolment[0].name",
+        if (userType == "Agent") { "HMRC-MTD-IT" }
+        else { "" }
+      )
+      .formParam(
+        "enrolment[0].taxIdentifier[0].name",
+        if (userType == "Agent") { "MTDITID" }
+        else { "" }
+      )
+      .formParam(
+        "enrolment[0].taxIdentifier[0].value",
+        if (userType == "Agent") { "FJWF01635669298" }
+        else { "" }
+      )
+      .formParam(
+        "enrolment[0].state",
+        if (userType == "Agent") { "Activated" }
+        else { "" }
+      )
       .check(status.is(303))
       .check(
         header("Location")
@@ -133,10 +153,13 @@ object Requests extends ServicesConfiguration {
       .check(status.is(303))
       .check(
         if (userType == "Individual") {
-          header("Location").is(routeRefundRequestJourney + "/how-you-will-get-the-refund").saveAs("HowYouWillGetRefund")
-        }
-        else {
-          header("Location").is(routeRefundRequestJourney + "/how-your-client-will-get-the-refund").saveAs("HowYouWillGetRefund")
+          header("Location")
+            .is(routeRefundRequestJourney + "/how-you-will-get-the-refund")
+            .saveAs("HowYouWillGetRefund")
+        } else {
+          header("Location")
+            .is(routeRefundRequestJourney + "/how-your-client-will-get-the-refund")
+            .saveAs("HowYouWillGetRefund")
         }
       )
 

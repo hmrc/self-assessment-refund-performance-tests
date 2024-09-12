@@ -22,29 +22,48 @@ import uk.gov.hmrc.perftests.example.Requests._
 class Simulation extends PerformanceTestRunner {
 
   setup("individual-refund-start", "Refund Journey - Individual")
-    .withRequests(getAuthLogin, postAuthLoginRefund("Individual"), getStartPage, postStartPageRefund, getRefundAmountPage,
-      postRefundAmountPage("Individual"))
+    .withRequests(
+      getAuthLogin,
+      postAuthLoginRefund("Individual"),
+      getStartPage,
+      postStartPageRefund,
+      getRefundAmountPage,
+      postRefundAmountPage("Individual")
+    )
 
   setup("agent-refund-start", "Refund Journey - Agent")
-    .withRequests(getAuthLogin, postAuthLoginRefund("Agent"), getStartPage, postStartPageRefund, getRefundAmountPage,
-      postRefundAmountPage("Agent"))
+    .withRequests(
+      getAuthLogin,
+      postAuthLoginRefund("Agent"),
+      getStartPage,
+      postStartPageRefund,
+      getRefundAmountPage,
+      postRefundAmountPage("Agent")
+    )
 
-    setup("refund-journey", "Refund Journey")
-      .withRequests(getHowYouWillGetRefundPage,
-          postHowYouWillGetRefundPage,
-          getAccountTypePage,
-          postAccountTypePage,
-          getBankDetailsPage,
-          postBankDetailsPage,
-          getCheckDetailsPage,
-          postCheckDetailsConfirmPage,
-          getReauthentication,
-          getReauthenticationPage,
-          getSubmit,
-          getConfirmationPage)
+  setup("refund-journey", "Refund Journey")
+    .withRequests(
+      getHowYouWillGetRefundPage,
+      postHowYouWillGetRefundPage,
+      getAccountTypePage,
+      postAccountTypePage,
+      getBankDetailsPage,
+      postBankDetailsPage,
+      getCheckDetailsPage,
+      postCheckDetailsConfirmPage,
+      getReauthentication,
+      getReauthenticationPage,
+      getSubmit,
+      getConfirmationPage
+    )
 
-    setup("history-journey", "History Journey")
-    .withRequests(getAuthLogin, postAuthLoginHistory, getStartPage, postStartPageHistory, getRefundHistory,
+  setup("history-journey", "History Journey")
+    .withRequests(
+      getAuthLogin,
+      postAuthLoginHistory,
+      getStartPage,
+      postStartPageHistory,
+      getRefundHistory,
       getHistoryPage,
       getRefundProcessingPage,
       getHistoryPage,
@@ -52,7 +71,8 @@ class Simulation extends PerformanceTestRunner {
       getHistoryPage,
       getRefundApprovedPage,
       getHistoryPage,
-      getRefundRejectedPage)
+      getRefundRejectedPage
+    )
 
   runSimulation()
 }
