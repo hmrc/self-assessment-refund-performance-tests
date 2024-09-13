@@ -36,7 +36,7 @@ object Requests extends ServicesConfiguration {
       .get(s"$baseUrlAuth$routeAuth/gg-sign-in": String)
       .check(status.is(200))
 
-  val postAuthLoginRefundSuccess: HttpRequestBuilder =
+  def postAuthLoginRefund(userType: String): HttpRequestBuilder =
     http("Post Auth Login - Refund Journey Successful")
       .post(s"$baseUrlAuth$routeAuth/gg-sign-in": String)
       .formParam("authorityId", "")
@@ -44,30 +44,34 @@ object Requests extends ServicesConfiguration {
         "redirectionUrl",
         s"$baseUrl$route/test-only/start-journey?type=StartRefund&nino=AB200111C&fullAmount=987.65&lastPaymentMethod=CARD&primeStubs=IfNotExists"
       )
-      .formParam("nino", "AB200111C")
+      .formParam(
+        "nino",
+        if (userType == "Individual") { "AB200111C" }
+        else { "" }
+      )
       .formParam("credentialStrength", "strong")
       .formParam("confidenceLevel", "250")
-      .formParam("affinityGroup", "Individual")
-      .check(status.is(303))
-      .check(
-        header("Location")
-          .is(
-            s"$baseUrl$route/test-only/start-journey?type=StartRefund&nino=AB200111C&fullAmount=987.65&lastPaymentMethod=CARD&primeStubs=IfNotExists"
-          )
-          .saveAs("StartJourneyPage")
-      )
-
-  val postAuthLoginRefundUnsuccessful: HttpRequestBuilder =
-    http("Post Auth Login - Refund Journey Unsuccessful")
-      .post(s"$baseUrlAuth$routeAuth/gg-sign-in": String)
-      .formParam("authorityId", "")
+      .formParam("affinityGroup", userType)
       .formParam(
-        "redirectionUrl",
-        s"$baseUrl$route/test-only/start-journey?type=StartRefund&nino=AB200111C&fullAmount=987.65&lastPaymentMethod=CARD&primeStubs=IfNotExists"
+        "enrolment[0].name",
+        if (userType == "Agent") { "HMRC-MTD-IT" }
+        else { "" }
       )
-      .formParam("credentialStrength", "strong")
-      .formParam("confidenceLevel", "50")
-      .formParam("affinityGroup", "Individual")
+      .formParam(
+        "enrolment[0].taxIdentifier[0].name",
+        if (userType == "Agent") { "MTDITID" }
+        else { "" }
+      )
+      .formParam(
+        "enrolment[0].taxIdentifier[0].value",
+        if (userType == "Agent") { "FJWF01635669298" }
+        else { "" }
+      )
+      .formParam(
+        "enrolment[0].state",
+        if (userType == "Agent") { "Activated" }
+        else { "" }
+      )
       .check(status.is(303))
       .check(
         header("Location")
@@ -134,38 +138,13 @@ object Requests extends ServicesConfiguration {
       .check(status.is(303))
       .check(header("Location").is(s"$route/refund-history") saveAs "HistoryPage")
 
-  val getIvStubRefund: HttpRequestBuilder =
-    http("Get IV Stub")
-      .get(
-        s"$baseUrlIV$routeIV/uplift?confidenceLevel=250&origin=self-assessment-refund&completionURL=/self-assessment-refund/refund-amount&failureURL=/self-assessment-refund/failedUplift": String
-      )
-      .check(status.is(200))
-      .check(css("input[name=csrfToken]", "value").saveAs("csrfToken"))
-      .check(css("form[method='POST']", "action").saveAs("ivStubsUrl"))
-
-  val postIvStubFailed: HttpRequestBuilder =
-    http("Post IV Stub - Failed")
-      .post(s"$baseUrlIV$${ivStubsUrl}": String)
-      .formParam("csrfToken", "${csrfToken}")
-      .formParam("forNino", "AB111111C")
-      .formParam("requiredResult", "PreconditionFailed")
-      .formParam("listOfSuccessEvidences", "")
-      .formParam("send", "send")
-      .check(status.is(303))
-      .check(header("Location").saveAs("RefundAmountPage"))
-
   val getRefundAmountPage: HttpRequestBuilder =
     http("Get Refund Amount Page")
       .get(s"$baseUrl$routeRefundRequestJourney/refund-amount": String)
       .check(status.is(200))
       .check(css("input[name=csrfToken]", "value").saveAs("csrfToken"))
 
-  val getCannotConfirmIdentityPage: HttpRequestBuilder =
-    http("Get Cannot Confirm Identity Page")
-      .get(s"$baseUrl$${RefundAmountPage}": String)
-      .check(status.is(200))
-
-  val postRefundAmountPage: HttpRequestBuilder =
+  def postRefundAmountPage(userType: String): HttpRequestBuilder =
     http("Post Refund Amount Page")
       .post(s"$baseUrl$routeRefundRequestJourney/refund-amount": String)
       .formParam("csrfToken", "${csrfToken}")
@@ -173,7 +152,15 @@ object Requests extends ServicesConfiguration {
       .formParam("amount", "500")
       .check(status.is(303))
       .check(
-        header("Location").is(routeRefundRequestJourney + "/how-you-will-get-the-refund").saveAs("HowYouWillGetRefund")
+        if (userType == "Individual") {
+          header("Location")
+            .is(routeRefundRequestJourney + "/how-you-will-get-the-refund")
+            .saveAs("HowYouWillGetRefund")
+        } else {
+          header("Location")
+            .is(routeRefundRequestJourney + "/how-your-client-will-get-the-refund")
+            .saveAs("HowYouWillGetRefund")
+        }
       )
 
   val getHowYouWillGetRefundPage: HttpRequestBuilder =

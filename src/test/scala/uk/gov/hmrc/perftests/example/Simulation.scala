@@ -21,19 +21,28 @@ import uk.gov.hmrc.perftests.example.Requests._
 
 class Simulation extends PerformanceTestRunner {
 
-  setup("start-successful-refund-journey", "Start Refund Journey")
-    .withRequests(getAuthLogin, postAuthLoginRefundSuccess, getStartPage, postStartPageRefund)
-
-  setup("start-unsuccessful-refund-journey", "Start Refund Journey")
-    .withRequests(getAuthLogin, postAuthLoginRefundUnsuccessful, getStartPage, postStartPageRefund, getRefundAmount)
-
-  setup("start-history-journey", "Start History Journey")
-    .withRequests(getAuthLogin, postAuthLoginHistory, getStartPage, postStartPageHistory, getRefundHistory)
-
-  setup("successful-refund-journey", "Successful Refund Journey")
+  setup("individual-refund-start", "Refund Journey - Individual")
     .withRequests(
+      getAuthLogin,
+      postAuthLoginRefund("Individual"),
+      getStartPage,
+      postStartPageRefund,
       getRefundAmountPage,
-      postRefundAmountPage,
+      postRefundAmountPage("Individual")
+    )
+
+  setup("agent-refund-start", "Refund Journey - Agent")
+    .withRequests(
+      getAuthLogin,
+      postAuthLoginRefund("Agent"),
+      getStartPage,
+      postStartPageRefund,
+      getRefundAmountPage,
+      postRefundAmountPage("Agent")
+    )
+
+  setup("refund-journey", "Refund Journey")
+    .withRequests(
       getHowYouWillGetRefundPage,
       postHowYouWillGetRefundPage,
       getAccountTypePage,
@@ -48,11 +57,13 @@ class Simulation extends PerformanceTestRunner {
       getConfirmationPage
     )
 
-  setup("unsuccessful-refund-journey", "Unsuccessful Refund Journey")
-    .withRequests(getIvStubRefund, postIvStubFailed, getCannotConfirmIdentityPage)
-
   setup("history-journey", "History Journey")
     .withRequests(
+      getAuthLogin,
+      postAuthLoginHistory,
+      getStartPage,
+      postStartPageHistory,
+      getRefundHistory,
       getHistoryPage,
       getRefundProcessingPage,
       getHistoryPage,
