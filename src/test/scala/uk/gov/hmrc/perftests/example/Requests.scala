@@ -174,23 +174,17 @@ object Requests extends ServicesConfiguration {
       .post(s"$baseUrl$routeRefundRequestJourney/how-you-will-get-the-refund": String)
       .formParam("csrfToken", "${csrfToken}")
       .check(status.is(303))
-      .check(header("Location").is(route + "/your-account-type").saveAs("HowYouWillGetRefund"))
-
-  val getWeNeedBankDetailsPage: HttpRequestBuilder =
-    http("Get We Need Bank Details Page")
-      .get(s"$baseUrl$${WeNeedBankDetailsPage}": String)
-      .check(status.is(200))
-      .check(css("input[name=csrfToken]", "value").saveAs("csrfToken"))
+      .check(header("Location").is(routeRefundRequestJourney + "/account-details").saveAs("HowYouWillGetRefund"))
 
   val getAccountTypePage: HttpRequestBuilder =
     http("Get Account Type Page")
-      .get(s"$baseUrl$route/your-account-type": String)
+      .get(s"$baseUrl$routeRefundRequestJourney/account-details": String)
       .check(status.is(200))
       .check(css("input[name=csrfToken]", "value").saveAs("csrfToken"))
 
   val postAccountTypePage: HttpRequestBuilder =
     http("Post Account Type Page")
-      .post(s"$baseUrl$route/your-account-type": String)
+      .post(s"$baseUrl$routeRefundRequestJourney/account-details": String)
       .formParam("csrfToken", "${csrfToken}")
       .formParam("accountType", "business")
       .formParam("continue", "")
