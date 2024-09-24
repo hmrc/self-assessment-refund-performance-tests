@@ -189,7 +189,7 @@ object Requests extends ServicesConfiguration {
       .formParam("accountType", "business")
       .formParam("continue", "")
       .check(status.is(303))
-      .check(header("Location").is(route + "/enter-bank-details").saveAs("BankDetailsPage"))
+      .check(header("Location").is(routeRefundRequestJourney + "/bank-building-society-details").saveAs("BankDetailsPage"))
 
   val getBankDetailsPage: HttpRequestBuilder =
     http("Get Bank Details Page")
