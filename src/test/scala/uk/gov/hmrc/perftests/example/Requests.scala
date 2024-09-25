@@ -207,17 +207,17 @@ object Requests extends ServicesConfiguration {
       .formParam("rollNumber", "0")
       .formParam("continue", "")
       .check(status.is(303))
-      .check(header("Location").is(route + "/check-your-details").saveAs("CheckDetailsPage"))
+      .check(header("Location").is(routeRefundRequestJourney + "/check-your-answers").saveAs("CheckAnswersPage"))
 
-  val getCheckDetailsPage: HttpRequestBuilder =
-    http("Get Check Details Page")
-      .get(s"$baseUrl$${CheckDetailsPage}": String)
+  val getCheckAnswersPage: HttpRequestBuilder =
+    http("Get Check Answers Page")
+      .get(s"$baseUrl$${CheckAnswersPage}": String)
       .check(status.is(200))
       .check(css("input[name=csrfToken]", "value").saveAs("csrfToken"))
 
-  val postCheckDetailsConfirmPage: HttpRequestBuilder =
-    http("Post Check Details Confirm Page")
-      .post(s"$baseUrl$route/check-your-details-confirm": String)
+  val postCheckAnswersConfirmPage: HttpRequestBuilder =
+    http("Post Check Answers Confirm Page")
+      .post(s"$baseUrl$routeRefundRequestJourney/check-your-answers-confirm": String)
       .formParam("csrfToken", "${csrfToken}")
       .check(status.is(303))
       .check(header("Location").is(route + "/reauthentication").saveAs("Reauthentication"))
@@ -228,7 +228,7 @@ object Requests extends ServicesConfiguration {
       .check(status.is(303))
       .check(
         header("Location")
-          .is(route + "/test-only/reauthentication?continue=/self-assessment-refund/check-your-details-submit")
+          .is(route + "/test-only/reauthentication?continue=/request-a-self-assessment-refund/check-your-answers-submit")
           .saveAs("ReauthenticationPage")
       )
 
@@ -239,7 +239,7 @@ object Requests extends ServicesConfiguration {
 
   val getSubmit: HttpRequestBuilder =
     http("Get Submit")
-      .get(s"$baseUrl$route/check-your-details-submit": String)
+      .get(s"$baseUrl$routeRefundRequestJourney/check-your-answers-submit": String)
       .check(status.is(303))
       .check(header("Location").saveAs("ConfirmationPage"))
 
