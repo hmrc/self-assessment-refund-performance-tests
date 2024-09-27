@@ -64,12 +64,32 @@ object Requests extends ServicesConfiguration {
       )
       .formParam(
         "enrolment[0].taxIdentifier[0].value",
-        if (userType == "Agent") { "FJWF01635669298" }
+        if (userType == "Agent") { "123" }
         else { "" }
       )
       .formParam(
         "enrolment[0].state",
         if (userType == "Agent") { "Activated" }
+        else { "" }
+      )
+      .formParam(
+        "delegatedEnrolment[0].key",
+        if (userType == "Agent") { "HMRC-MTD-IT" }
+        else { "" }
+      )
+      .formParam(
+        "delegatedEnrolment[0].taxIdentifier[0].name",
+        if (userType == "Agent") { "MTDITID" }
+        else { "" }
+      )
+      .formParam(
+        "delegatedEnrolment[0].taxIdentifier[0].value",
+        if (userType == "Agent") { "123" }
+        else { "" }
+      )
+      .formParam(
+        "delegatedEnrolment[0].delegatedAuthRule",
+        if (userType == "Agent") { "mtd-it-auth" }
         else { "" }
       )
       .check(status.is(303))
