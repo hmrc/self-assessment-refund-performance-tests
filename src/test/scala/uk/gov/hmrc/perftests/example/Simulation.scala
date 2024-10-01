@@ -51,6 +51,8 @@ class Simulation extends PerformanceTestRunner {
       postBankDetailsPage,
       getCheckAnswersPage,
       postCheckAnswersConfirmPage,
+      getSignInAgainPage,
+      postSignInAgainPage,
       getReauthentication,
       getReauthenticationPage,
       getSubmit,

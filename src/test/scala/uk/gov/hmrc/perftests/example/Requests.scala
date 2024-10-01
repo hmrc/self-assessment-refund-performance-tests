@@ -240,7 +240,20 @@ object Requests extends ServicesConfiguration {
       .post(s"$baseUrl$routeRefundRequestJourney/check-your-answers-confirm": String)
       .formParam("csrfToken", "${csrfToken}")
       .check(status.is(303))
-      .check(header("Location").is(route + "/reauthentication").saveAs("Reauthentication"))
+      .check(header("Location").is(routeRefundRequestJourney + "/sign-in-again").saveAs("SignInAgainPage"))
+
+  val getSignInAgainPage: HttpRequestBuilder =
+    http("Get Sign In Again Page")
+      .get(s"$baseUrl$${SignInAgainPage}": String)
+      .check(status.is(200))
+      .check(css("input[name=csrfToken]", "value").saveAs("csrfToken"))
+
+  val postSignInAgainPage: HttpRequestBuilder =
+    http("Post Sign In Again Page")
+      .post(s"$baseUrl$${SignInAgainPage}": String)
+      .formParam("csrfToken", "${csrfToken}")
+      .check(status.is(303))
+      .check(header("Location").is(routeRefundRequestJourney + "/reauthentication").saveAs("Reauthentication"))
 
   val getReauthentication: HttpRequestBuilder =
     http("Get Reauthentication")
@@ -248,7 +261,7 @@ object Requests extends ServicesConfiguration {
       .check(status.is(303))
       .check(
         header("Location")
-          .is(route + "/test-only/reauthentication?continue=/request-a-self-assessment-refund/check-your-answers-submit")
+          .is(route + "/test-only/reauthentication?continue=/request-a-self-assessment-refund/reauthenticated-submit")
           .saveAs("ReauthenticationPage")
       )
 
@@ -259,7 +272,7 @@ object Requests extends ServicesConfiguration {
 
   val getSubmit: HttpRequestBuilder =
     http("Get Submit")
-      .get(s"$baseUrl$routeRefundRequestJourney/check-your-answers-submit": String)
+      .get(s"$baseUrl$routeRefundRequestJourney/reauthenticated-submit": String)
       .check(status.is(303))
       .check(header("Location").saveAs("ConfirmationPage"))
 
