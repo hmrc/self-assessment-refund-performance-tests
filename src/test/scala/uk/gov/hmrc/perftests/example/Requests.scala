@@ -64,12 +64,32 @@ object Requests extends ServicesConfiguration {
       )
       .formParam(
         "enrolment[0].taxIdentifier[0].value",
-        if (userType == "Agent") { "FJWF01635669298" }
+        if (userType == "Agent") { "123" }
         else { "" }
       )
       .formParam(
         "enrolment[0].state",
         if (userType == "Agent") { "Activated" }
+        else { "" }
+      )
+      .formParam(
+        "delegatedEnrolment[0].key",
+        if (userType == "Agent") { "HMRC-MTD-IT" }
+        else { "" }
+      )
+      .formParam(
+        "delegatedEnrolment[0].taxIdentifier[0].name",
+        if (userType == "Agent") { "MTDITID" }
+        else { "" }
+      )
+      .formParam(
+        "delegatedEnrolment[0].taxIdentifier[0].value",
+        if (userType == "Agent") { "123" }
+        else { "" }
+      )
+      .formParam(
+        "delegatedEnrolment[0].delegatedAuthRule",
+        if (userType == "Agent") { "mtd-it-auth" }
         else { "" }
       )
       .check(status.is(303))
@@ -207,17 +227,17 @@ object Requests extends ServicesConfiguration {
       .formParam("rollNumber", "0")
       .formParam("continue", "")
       .check(status.is(303))
-      .check(header("Location").is(route + "/check-your-details").saveAs("CheckDetailsPage"))
+      .check(header("Location").is(routeRefundRequestJourney + "/check-your-answers").saveAs("CheckAnswersPage"))
 
-  val getCheckDetailsPage: HttpRequestBuilder =
-    http("Get Check Details Page")
-      .get(s"$baseUrl$${CheckDetailsPage}": String)
+  val getCheckAnswersPage: HttpRequestBuilder =
+    http("Get Check Answers Page")
+      .get(s"$baseUrl$${CheckAnswersPage}": String)
       .check(status.is(200))
       .check(css("input[name=csrfToken]", "value").saveAs("csrfToken"))
 
-  val postCheckDetailsConfirmPage: HttpRequestBuilder =
-    http("Post Check Details Confirm Page")
-      .post(s"$baseUrl$route/check-your-details-confirm": String)
+  val postCheckAnswersConfirmPage: HttpRequestBuilder =
+    http("Post Check Answers Confirm Page")
+      .post(s"$baseUrl$routeRefundRequestJourney/check-your-answers-confirm": String)
       .formParam("csrfToken", "${csrfToken}")
       .check(status.is(303))
       .check(header("Location").is(routeRefundRequestJourney + "/sign-in-again").saveAs("SignInAgainPage"))
