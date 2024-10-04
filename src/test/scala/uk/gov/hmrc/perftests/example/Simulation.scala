@@ -59,20 +59,18 @@ class Simulation extends PerformanceTestRunner {
       getConfirmationPage
     )
 
-  setup("history-journey", "History Journey")
+  setup("tracker-journey", "Tracker Journey")
     .withRequests(
       getAuthLogin,
-      postAuthLoginHistory,
+      postAuthLoginTrack,
       getStartPage,
-      postStartPageHistory,
-      getRefundHistory,
-      getHistoryPage,
+      postStartPageTrack,
+      getRefundTracker,
+      getTrackerPage,
       getRefundProcessingPage,
-      getHistoryPage,
-      getRefundPaidPage,
-      getHistoryPage,
+      getTrackerPage,
       getRefundApprovedPage,
-      getHistoryPage,
+      getTrackerPage,
       getRefundRejectedPage
     )
 
