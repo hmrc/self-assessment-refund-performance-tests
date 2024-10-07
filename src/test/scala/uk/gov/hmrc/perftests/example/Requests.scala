@@ -28,6 +28,7 @@ object Requests extends ServicesConfiguration {
   val baseUrlIV: String                 = baseUrlFor("iv-stub")
   val route: String                     = "/self-assessment-refund"
   val routeRefundRequestJourney: String = "/request-a-self-assessment-refund"
+  val routeTrackRequestJourney: String  = "/track-a-self-assessment-refund"
   val routeAuth: String                 = "/auth-login-stub"
   val routeIV: String                   = "/iv-stub"
 
@@ -101,8 +102,8 @@ object Requests extends ServicesConfiguration {
           .saveAs("StartJourneyPage")
       )
 
-  val postAuthLoginHistory: HttpRequestBuilder =
-    http("Post Auth Login - History")
+  val postAuthLoginTrack: HttpRequestBuilder =
+    http("Post Auth Login - Track")
       .post(s"$baseUrlAuth$routeAuth/gg-sign-in": String)
       .formParam("authorityId", "")
       .formParam(
@@ -137,8 +138,8 @@ object Requests extends ServicesConfiguration {
       .formParam("primeStubs", "IfNotExists")
       .check(status.is(303))
 
-  val postStartPageHistory: HttpRequestBuilder =
-    http("Post Start Page - History")
+  val postStartPageTrack: HttpRequestBuilder =
+    http("Post Start Page - Track")
       .post("${StartJourneyPage}": String)
       .formParam("type", "ViewHistory")
       .formParam("nino", "AB111111C")
@@ -152,11 +153,11 @@ object Requests extends ServicesConfiguration {
       .get(s"$baseUrl$routeRefundRequestJourney/refund-amount": String)
       .check(status.is(303))
 
-  val getRefundHistory: HttpRequestBuilder =
-    http("Get Refund History")
-      .get(s"$baseUrl$route/refund-history/start": String)
+  val getRefundTracker: HttpRequestBuilder =
+    http("Get Refund Tracker")
+      .get(s"$baseUrl$routeTrackRequestJourney/refund-request-tracker/start": String)
       .check(status.is(303))
-      .check(header("Location").is(s"$route/refund-history") saveAs "HistoryPage")
+      .check(header("Location").is(s"$routeTrackRequestJourney/refund-request-tracker") saveAs "TrackerPage")
 
   val getRefundAmountPage: HttpRequestBuilder =
     http("Get Refund Amount Page")
@@ -281,9 +282,9 @@ object Requests extends ServicesConfiguration {
       .get(s"$baseUrl$${ConfirmationPage}": String)
       .check(status.is(200))
 
-  val getHistoryPage: HttpRequestBuilder =
-    http("Get History Page")
-      .get(s"$baseUrl$${HistoryPage}": String)
+  val getTrackerPage: HttpRequestBuilder =
+    http("Get Tracker Page")
+      .get(s"$baseUrl$${TrackerPage}": String)
       .check(status.is(200))
 
   val getRefundProcessingPage: HttpRequestBuilder =
@@ -294,11 +295,6 @@ object Requests extends ServicesConfiguration {
   val getRefundApprovedPage: HttpRequestBuilder =
     http("Get Refund Approved Page")
       .get(s"$baseUrl$route/refund-status/001": String)
-      .check(status.is(200))
-
-  val getRefundPaidPage: HttpRequestBuilder =
-    http("Get Refund Paid Page")
-      .get(s"$baseUrl$route/refund-status/004": String)
       .check(status.is(200))
 
   val getRefundRejectedPage: HttpRequestBuilder =
