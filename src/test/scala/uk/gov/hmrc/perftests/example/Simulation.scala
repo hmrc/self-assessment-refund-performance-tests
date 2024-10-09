@@ -67,11 +67,13 @@ class Simulation extends PerformanceTestRunner {
       postStartPageTrack,
       getRefundTracker,
       getTrackerPage,
-      getRefundProcessingPage,
+      getRefundProcessingRiskingPage,
       getTrackerPage,
       getRefundApprovedPage,
       getTrackerPage,
-      getRefundRejectedPage
+      getRefundRejectedPage,
+      getTrackerPage,
+      getRefundProcessingPage
     )
 
   runSimulation()
