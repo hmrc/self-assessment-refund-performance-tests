@@ -287,14 +287,14 @@ object Requests extends ServicesConfiguration {
       .get(s"$baseUrl$${TrackerPage}": String)
       .check(status.is(200))
 
-  val getRefundProcessingPage: HttpRequestBuilder =
-    http("Get Refund Processing Page")
-      .get(s"$baseUrl$route/refund-status/003": String)
+  val getRefundProcessingRiskingPage: HttpRequestBuilder =
+    http("Get Refund Processing Risking Page")
+      .get(s"$baseUrl$routeTrackRequestJourney/refund-being-processed/003": String)
       .check(status.is(200))
 
   val getRefundApprovedPage: HttpRequestBuilder =
     http("Get Refund Approved Page")
-      .get(s"$baseUrl$route/refund-status/001": String)
+      .get(s"$baseUrl$route/refund-status/004": String)
       .check(status.is(200))
 
   val getRefundRejectedPage: HttpRequestBuilder =
@@ -302,4 +302,8 @@ object Requests extends ServicesConfiguration {
       .get(s"$baseUrl$route/refund-status/002": String)
       .check(status.is(200))
 
+  val getRefundProcessingPage: HttpRequestBuilder =
+    http("Get Refund Processing Page")
+      .get(s"$baseUrl$routeTrackRequestJourney/refund-being-processed/001": String)
+      .check(status.is(200))
 }
